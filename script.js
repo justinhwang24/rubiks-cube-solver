@@ -1,14 +1,14 @@
-import * as THREE from './three.module.min.js';
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 
 let scene, camera, renderer;
-let isDragging = false;
-let previousMousePosition = { x: 0, y: 0 };
-let rotationSpeed = 0.4; // Adjust the speed of rotation
 
-function init() {
+export function init() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, 400 / 400, 0.1, 1000);
-    camera.position.z = 5;
+
+    // Position the camera to look at a corner of the cube
+    camera = new THREE.PerspectiveCamera(60, 400 / 400, 0.1, 1000);
+    camera.position.set(3, 3, 3); // Move the camera to the corner
+    camera.lookAt(0, 0, 0); // Point the camera at the center of the cube
 
     renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(400, 400);
@@ -19,8 +19,10 @@ function init() {
 }
 
 function createRubiksCube() {
-    const cubeSize = 1;
+    const cubeSize = 0.8;
     const spacing = 0.05;
+    const cubies = [];
+
     const colors = {
         'U': 0xffffff, // White
         'D': 0xffff00, // Yellow
@@ -35,57 +37,67 @@ function createRubiksCube() {
             for (let z = -1; z <= 1; z++) {
                 const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
                 const materials = [
-                    new THREE.MeshBasicMaterial({ color: (x === 1 ? colors['R'] : 0x000000) }), // Right face
-                    new THREE.MeshBasicMaterial({ color: (x === -1 ? colors['L'] : 0x000000) }), // Left face
-                    new THREE.MeshBasicMaterial({ color: (y === 1 ? colors['U'] : 0x000000) }), // Up face
-                    new THREE.MeshBasicMaterial({ color: (y === -1 ? colors['D'] : 0x000000) }), // Down face
-                    new THREE.MeshBasicMaterial({ color: (z === 1 ? colors['F'] : 0x000000) }), // Front face
-                    new THREE.MeshBasicMaterial({ color: (z === -1 ? colors['B'] : 0x000000) })  // Back face
+                    new THREE.MeshBasicMaterial({ color: (x === 1 ? colors['R'] : 0x000000) }), 
+                    new THREE.MeshBasicMaterial({ color: (x === -1 ? colors['L'] : 0x000000) }), 
+                    new THREE.MeshBasicMaterial({ color: (y === 1 ? colors['U'] : 0x000000) }), 
+                    new THREE.MeshBasicMaterial({ color: (y === -1 ? colors['D'] : 0x000000) }), 
+                    new THREE.MeshBasicMaterial({ color: (z === 1 ? colors['F'] : 0x000000) }), 
+                    new THREE.MeshBasicMaterial({ color: (z === -1 ? colors['B'] : 0x000000) })
                 ];
                 const cubie = new THREE.Mesh(geometry, materials);
                 cubie.position.set(x * (cubeSize + spacing), y * (cubeSize + spacing), z * (cubeSize + spacing));
                 scene.add(cubie);
+                cubies.push(cubie);
             }
         }
     }
 }
 
-function animate() {
+export function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 }
 
-document.addEventListener('mousedown', function (e) {
-    isDragging = true;
-    previousMousePosition = { x: e.clientX, y: e.clientY };
+let rotation = new THREE.Euler();
+
+document.getElementById('yaw-btn').addEventListener('click', function () {
+    rotation.y += Math.PI / 2;
+    applyRotation();
 });
 
-document.addEventListener('mousemove', function (e) {
-    if (isDragging) {
-        const deltaMove = {
-            x: e.clientX - previousMousePosition.x,
-            y: e.clientY - previousMousePosition.y
-        };
+document.getElementById('pitch-btn').addEventListener('click', function () {
+    rotation.x += Math.PI / 2;
+    applyRotation();
+});
 
-        const deltaRotationQuaternion = new THREE.Quaternion()
-            .setFromEuler(new THREE.Euler(
-                toRadians(deltaMove.y * rotationSpeed),
-                toRadians(deltaMove.x * rotationSpeed),
-                0,
-                'XYZ'
-            ));
+document.getElementById('roll-btn').addEventListener('click', function () {
+    rotation.z += Math.PI / 2;
+    applyRotation();
+});
 
-        scene.quaternion.multiplyQuaternions(deltaRotationQuaternion, scene.quaternion);
-        previousMousePosition = { x: e.clientX, y: e.clientY };
+function applyRotation() {
+    const targetRotation = new THREE.Euler(rotation.x, rotation.y, rotation.z);
+
+    const duration = 500; // Animation duration in milliseconds
+    const startRotation = new THREE.Euler(scene.rotation.x, scene.rotation.y, scene.rotation.z);
+    const startTime = performance.now();
+
+    function animateRotation(time) {
+        const elapsedTime = time - startTime;
+        const progress = Math.min(elapsedTime / duration, 1); // Ensure progress is between 0 and 1
+
+        scene.rotation.x = THREE.MathUtils.lerp(startRotation.x, targetRotation.x, progress);
+        scene.rotation.y = THREE.MathUtils.lerp(startRotation.y, targetRotation.y, progress);
+        scene.rotation.z = THREE.MathUtils.lerp(startRotation.z, targetRotation.z, progress);
+
+        renderer.render(scene, camera);
+
+        if (progress < 1) {
+            requestAnimationFrame(animateRotation);
+        }
     }
-});
 
-document.addEventListener('mouseup', function () {
-    isDragging = false;
-});
-
-function toRadians(angle) {
-    return angle * (Math.PI / 180);
+    requestAnimationFrame(animateRotation);
 }
 
 window.onload = init;

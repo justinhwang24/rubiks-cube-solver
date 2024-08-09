@@ -15,8 +15,23 @@ body {
     height: 400px;
 }
 
+#color-picker {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
 #controls {
     margin-top: 20px;
+    text-align: center;
 }
 
 button {
@@ -26,6 +41,7 @@ button {
     margin: 5px;
     font-size: 16px;
     cursor: pointer;
+    border-radius: 3px;
 }
 
 button:hover {

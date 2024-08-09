@@ -7,15 +7,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Rubik's Cube Solver</h1>
     <div id="cube-container"></div>
+    
+    <div id="color-picker">
+        <button class="color-btn" style="background-color: #ffffff;" data-color="#ffffff"></button>
+        <button class="color-btn" style="background-color: #ffff00;" data-color="#ffff00"></button>
+        <button class="color-btn" style="background-color: #00ff00;" data-color="#00ff00"></button>
+        <button class="color-btn" style="background-color: #0000ff;" data-color="#0000ff"></button>
+        <button class="color-btn" style="background-color: #ff8000;" data-color="#ff8000"></button>
+        <button class="color-btn" style="background-color: #ff0000;" data-color="#ff0000"></button>
+    </div>
+    
     <div id="controls">
+        <button id="yaw-btn">Yaw</button>
+        <button id="pitch-btn">Pitch</button>
+        <button id="roll-btn">Roll</button>
+        <br>
         <button id="solve-btn">Solve</button>
         <button id="scramble-btn">Scramble</button>
         <button id="reset-btn">Reset</button>
     </div>
-    <script src="three.module.min.js"></script>
-    <script src="cube.js"></script>
+    
+    <script type="module">
+        import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+        import { createRubiksCube, animate } from './script.js';
+
+        window.onload = () => {
+            createRubiksCube();
+            animate();
+        };
+    </script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
