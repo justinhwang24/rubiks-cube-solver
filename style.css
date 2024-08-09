@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #282c34;
+    color: white;
+    font-family: Arial, sans-serif;
+    flex-direction: column;
+}
+
+#cube-container {
+    width: 400px;
+    height: 400px;
+}
+
+#controls {
+    margin-top: 20px;
+}
+
+button {
+    background-color: #61dafb;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #21a1f1;
+}
