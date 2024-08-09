@@ -7,6 +7,7 @@ Stuck solving your Rubik's cube? This web app simulates a Rubik's Cube using a 3
 ## How It Works
 
 **Tech used:** HTML, CSS, JavaScript, Three.js
+
 More information about the algorithms used will be posted.
 
 ## Optimizations
