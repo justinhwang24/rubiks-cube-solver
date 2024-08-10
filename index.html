@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rubik's Cube Solver</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div id="cube-container"></div>
@@ -19,24 +20,15 @@
     </div>
     
     <div id="controls">
-        <button id="yaw-btn">Yaw</button>
-        <button id="pitch-btn">Pitch</button>
-        <button id="roll-btn">Roll</button>
+        <button id="left-btn"><i class="fa-solid fa-caret-left"></i></button>
+        <button id="down-btn"><i class="fa-solid fa-caret-down"></i></button>
+        <button id="right-btn"><i class="fa-solid fa-caret-right"></i></button>
         <br>
         <button id="solve-btn">Solve</button>
         <button id="scramble-btn">Scramble</button>
         <button id="reset-btn">Reset</button>
     </div>
     
-    <script type="module">
-        import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
-        import { createRubiksCube, animate } from './script.js';
-
-        window.onload = () => {
-            createRubiksCube();
-            animate();
-        };
-    </script>
-    <script type="module" src="script.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

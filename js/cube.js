@@ -1,8 +1,8 @@
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 
-let scene, camera, renderer;
+let scene, camera, renderer, axesHelper, cubeGroup;
 
-export function init() {
+export function initCube() {
     scene = new THREE.Scene();
 
     // Position the camera to look at a corner of the cube
@@ -15,13 +15,16 @@ export function init() {
     document.getElementById('cube-container').appendChild(renderer.domElement);
 
     createRubiksCube();
+    addAxesHelper(); // Add the axes helper to the camera
     animate();
 }
 
 function createRubiksCube() {
     const cubeSize = 0.8;
     const spacing = 0.05;
-    const cubies = [];
+
+    cubeGroup = new THREE.Group(); // Create a group for the cube
+    cubeGroup.rotation.order = 'YXZ'; // Set rotation order if needed
 
     const colors = {
         'U': 0xffffff, // White
@@ -46,11 +49,20 @@ function createRubiksCube() {
                 ];
                 const cubie = new THREE.Mesh(geometry, materials);
                 cubie.position.set(x * (cubeSize + spacing), y * (cubeSize + spacing), z * (cubeSize + spacing));
-                scene.add(cubie);
-                cubies.push(cubie);
+                cubeGroup.add(cubie); // Add cubie to the cube group
             }
         }
     }
+
+    scene.add(cubeGroup); // Add the cube group to the scene
+
+    // Add axes helper to camera
+    addAxesHelper();
+}
+
+function addAxesHelper() {
+    axesHelper = new THREE.AxesHelper(2);
+    scene.add(axesHelper); // Add axes helper to camera
 }
 
 export function animate() {
@@ -58,46 +70,4 @@ export function animate() {
     renderer.render(scene, camera);
 }
 
-let rotation = new THREE.Euler();
-
-document.getElementById('yaw-btn').addEventListener('click', function () {
-    rotation.y += Math.PI / 2;
-    applyRotation();
-});
-
-document.getElementById('pitch-btn').addEventListener('click', function () {
-    rotation.x += Math.PI / 2;
-    applyRotation();
-});
-
-document.getElementById('roll-btn').addEventListener('click', function () {
-    rotation.z += Math.PI / 2;
-    applyRotation();
-});
-
-function applyRotation() {
-    const targetRotation = new THREE.Euler(rotation.x, rotation.y, rotation.z);
-
-    const duration = 500; // Animation duration in milliseconds
-    const startRotation = new THREE.Euler(scene.rotation.x, scene.rotation.y, scene.rotation.z);
-    const startTime = performance.now();
-
-    function animateRotation(time) {
-        const elapsedTime = time - startTime;
-        const progress = Math.min(elapsedTime / duration, 1); // Ensure progress is between 0 and 1
-
-        scene.rotation.x = THREE.MathUtils.lerp(startRotation.x, targetRotation.x, progress);
-        scene.rotation.y = THREE.MathUtils.lerp(startRotation.y, targetRotation.y, progress);
-        scene.rotation.z = THREE.MathUtils.lerp(startRotation.z, targetRotation.z, progress);
-
-        renderer.render(scene, camera);
-
-        if (progress < 1) {
-            requestAnimationFrame(animateRotation);
-        }
-    }
-
-    requestAnimationFrame(animateRotation);
-}
-
-window.onload = init;
+export { scene, camera, renderer, cubeGroup }; // Export scene, camera, renderer, and cubeGroup
