@@ -1,30 +1,31 @@
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+import { setupColorPicker } from './color-picker.js'; // Import the setupColorPicker function
 
 let scene, camera, renderer, axesHelper, cubeGroup;
 
 export function initCube() {
     scene = new THREE.Scene();
 
-    // Position the camera to look at a corner of the cube
     camera = new THREE.PerspectiveCamera(60, 400 / 400, 0.1, 1000);
-    camera.position.set(3, 3, 3); // Move the camera to the corner
-    camera.lookAt(0, 0, 0); // Point the camera at the center of the cube
+    camera.position.set(3, 3, 3);
+    camera.lookAt(0, 0, 0);
 
-    renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(400, 400);
     document.getElementById('cube-container').appendChild(renderer.domElement);
 
     createRubiksCube();
-    addAxesHelper(); // Add the axes helper to the camera
+    addAxesHelper();
     animate();
+    setupColorPicker();
 }
 
 function createRubiksCube() {
     const cubeSize = 0.8;
     const spacing = 0.05;
 
-    cubeGroup = new THREE.Group(); // Create a group for the cube
-    cubeGroup.rotation.order = 'YXZ'; // Set rotation order if needed
+    cubeGroup = new THREE.Group();
+    cubeGroup.rotation.order = 'YXZ';
 
     const colors = {
         'U': 0xffffff, // White
@@ -34,7 +35,7 @@ function createRubiksCube() {
         'L': 0xff8000, // Orange
         'R': 0xff0000  // Red
     };
-
+    
     for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
             for (let z = -1; z <= 1; z++) {
@@ -50,19 +51,23 @@ function createRubiksCube() {
                 const cubie = new THREE.Mesh(geometry, materials);
                 cubie.position.set(x * (cubeSize + spacing), y * (cubeSize + spacing), z * (cubeSize + spacing));
                 cubeGroup.add(cubie); // Add cubie to the cube group
+
+                const edgesGeometry = new THREE.EdgesGeometry(geometry);
+                const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 100 });
+                const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+                cubie.add(edges); // Add edges to the cubie
             }
         }
     }
 
     scene.add(cubeGroup); // Add the cube group to the scene
 
-    // Add axes helper to camera
     addAxesHelper();
 }
 
 function addAxesHelper() {
     axesHelper = new THREE.AxesHelper(2);
-    scene.add(axesHelper); // Add axes helper to camera
+    scene.add(axesHelper);
 }
 
 export function animate() {
@@ -70,4 +75,4 @@ export function animate() {
     renderer.render(scene, camera);
 }
 
-export { scene, camera, renderer, cubeGroup }; // Export scene, camera, renderer, and cubeGroup
+export { scene, camera, renderer, cubeGroup };

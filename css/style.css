@@ -29,6 +29,10 @@ body {
     border-radius: 3px;
 }
 
+.color-btn.selected {
+    outline: 4px solid #eaeaea; /* Adjust the color and thickness of the outline as needed */
+}
+
 #controls {
     margin-top: 20px;
     text-align: center;
