@@ -27,6 +27,8 @@ function createRubiksCube() {
     cubeGroup = new THREE.Group();
     cubeGroup.rotation.order = 'YXZ';
 
+    const edgesGroup = new THREE.Group();
+
     const colors = {
         'U': 0xffffff, // White
         'D': 0xffff00, // Yellow
@@ -53,14 +55,17 @@ function createRubiksCube() {
                 cubeGroup.add(cubie); // Add cubie to the cube group
 
                 const edgesGeometry = new THREE.EdgesGeometry(geometry);
-                const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 100 });
+                const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
                 const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
-                cubie.add(edges); // Add edges to the cubie
+                edges.position.copy(cubie.position); // Match the position of the edges with the cubie
+                edges.layers.set(1); 
+                edgesGroup.add(edges); 
             }
         }
     }
 
-    scene.add(cubeGroup); // Add the cube group to the scene
+    scene.add(cubeGroup);
+    scene.add(edgesGroup);
 
     addAxesHelper();
 }
