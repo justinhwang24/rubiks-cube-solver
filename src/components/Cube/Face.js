@@ -13,44 +13,48 @@ class Face {
         }
     }
 
-    // rotateFace(clockwise) {
-    //     console.log(`Rotating ${this.name} face, clockwise ${clockwise}`);
-    //     const angle = clockwise ? Math.PI / 2 : -Math.PI / 2;
-    //     const axis = this.getRotationAxis();
-    
-    //     const rotation = new THREE.Quaternion().setFromAxisAngle(axis, angle);
-    
-    //     this.cubies.forEach(cubie => cubie.rotate(rotation));
-    // }    
-
     rotateFace(clockwise) {
         console.log(`Rotating ${this.name} face, clockwise ${clockwise}`);
-        const angle = clockwise ? Math.PI / 2 : -Math.PI / 2;
+        const targetAngle = clockwise ? Math.PI / 2 : -Math.PI / 2;
         const axis = this.getRotationAxis();
-
-        // Calculate the face center
-        const faceCenter = this.getFaceCenter();
-
-        // Perform rotation on each cubie
+        const duration = 0.5; // Animation duration in seconds
+    
+        const initialPositions = [];
+        const initialRotations = [];
+        
+        // Store initial positions and rotations
         this.cubies.forEach(cubie => {
-            const cubiePos = new THREE.Vector3().copy(cubie.getMesh().position);
-    
-            // Move cubie to face center
-            cubiePos.sub(faceCenter);
-    
-            // Rotate cubie around the face center using a quaternion
-            const quaternion = new THREE.Quaternion().setFromAxisAngle(axis, angle);
-            cubiePos.applyQuaternion(quaternion);
-    
-            // Move cubie back to its original position
-            cubiePos.add(faceCenter);
-    
-            // Update the cubie's position
-            cubie.getMesh().position.copy(cubiePos);
-    
-            // Optionally, rotate the cubie's orientation as well
-            cubie.getMesh().applyQuaternion(quaternion);
+            const mesh = cubie.getMesh();
+            initialPositions.push(mesh.position.clone());
+            initialRotations.push(mesh.quaternion.clone());
         });
+    
+        const clock = new THREE.Clock();
+        const animateRotation = () => {
+            const elapsedTime = clock.getElapsedTime();
+            const progress = Math.min(elapsedTime / duration, 1); // Clamp progress to 1
+            
+            this.cubies.forEach((cubie, index) => {
+                const mesh = cubie.getMesh();
+                
+                // Calculate the current angle for this frame
+                const currentAngle = progress * targetAngle;
+                
+                // Reset to initial position and rotation
+                mesh.position.copy(initialPositions[index]);
+                mesh.quaternion.copy(initialRotations[index]);
+                
+                // Apply rotation around the center of the cube
+                mesh.position.applyAxisAngle(axis, currentAngle);
+                mesh.rotateOnWorldAxis(axis, currentAngle);
+            });
+    
+            if (progress < 1) {
+                requestAnimationFrame(animateRotation);
+            }
+        };
+    
+        animateRotation();
     }
 
     getRotationAxis() {
