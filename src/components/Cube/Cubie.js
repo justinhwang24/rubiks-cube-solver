@@ -28,16 +28,16 @@ export default class Cubie {
         return this.mesh;
     }
 
+    updatePosition() {
+        this.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+    }
+
     getName() {
         return this.name;
     }
 
     setName(name) {
         this.name = name;
-    }
-
-    rotate(rotation) {
-        this.mesh.quaternion.multiply(rotation);
     }
     
     toString() {

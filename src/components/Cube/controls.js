@@ -103,7 +103,7 @@ function rotateCube(cube, direction) {
 }
 
 function rotateFace(cube, faceName, direction) {
-    const face = cube.faces[faceName];
+    const face = cube.getFace(faceName);
     if (face) {
         face.rotateFace(direction);
     }

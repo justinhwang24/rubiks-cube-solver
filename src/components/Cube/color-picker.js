@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
-import { Cube } from './cube.js';
+// import Cube from './cube.js';
 
-let currentColor = '#ffffff';
+let currentColor = '';
 let cubeInstance;
 
 export function setupColorPicker(cube) {

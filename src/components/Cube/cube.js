@@ -6,6 +6,7 @@ import Face from './Face.js';
 class Cube {
     constructor() {
         this.faces = {};
+        this.cubies = [];
 
         this.createFaces();
         this.init();
@@ -14,7 +15,7 @@ class Cube {
     createFaces() {
         const faceNames = ['U', 'D', 'L', 'R', 'F', 'B'];
         faceNames.forEach(name => {
-            this.faces[name] = new Face(name);
+            this.faces[name] = new Face(name, this);
         });
     }
 
@@ -67,6 +68,7 @@ class Cube {
                         cubeSize,
                         materials.map(material => material.color.getHex())
                     );
+                    this.cubies.push(cubie);
 
                     // Add cubie to the appropriate faces
                     for (const face in this.faces) {
@@ -131,6 +133,21 @@ class Cube {
         if (face) {
             face.rotateFace(clockwise);
         }
+    }
+
+    updateFaceAssignments() {
+        Object.keys(this.faces).forEach(faceName => {
+            this.getFace(faceName).cubies = [];
+        });
+
+        // Reassign cubies to the correct faces
+        this.cubies.forEach(cubie => {
+            Object.keys(this.faces).forEach(faceName => {
+                if (this.isCubieOnFace(cubie, faceName)) {
+                    this.getFace(faceName).addCubie(cubie);
+                }
+            });
+        });
     }
 }
 

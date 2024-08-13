@@ -2,9 +2,10 @@ import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/thr
 import Cubie from './Cubie.js';
 
 class Face {
-    constructor(name) {
+    constructor(name, cube) {
         this.name = name; // 'U', 'D', 'L', 'R', 'F', 'B'
         this.cubies = [];
+        this.cube = cube;
     }
 
     addCubie(cubie) {
@@ -51,6 +52,10 @@ class Face {
     
             if (progress < 1) {
                 requestAnimationFrame(animateRotation);
+            }
+            else {
+                this.cubies.forEach(cubie => cubie.updatePosition());
+                this.cube.updateFaceAssignments();
             }
         };
     
