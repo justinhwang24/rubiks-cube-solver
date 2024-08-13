@@ -7,6 +7,7 @@ export default class Cubie {
         this.size = size;
         this.colors = colors; // colors should be an array of colors for each face
 
+        this.name = '';
         this.geometry = new THREE.BoxGeometry(this.size, this.size, this.size);
         this.materials = this.colors.map(color => new THREE.MeshBasicMaterial({ color }));
 
@@ -27,32 +28,19 @@ export default class Cubie {
         return this.mesh;
     }
 
-    rotateFace(face, direction) {
-        const angle = direction === 'clockwise' ? Math.PI / 2 : -Math.PI / 2;
-        const axis = new THREE.Vector3(0, 0, 1); // Default axis
+    getName() {
+        return this.name;
+    }
 
-        switch (face) {
-            case 'U':
-                axis.set(0, 1, 0); // Up face rotates around the Y-axis
-                break;
-            case 'D':
-                axis.set(0, -1, 0); // Down face rotates around the Y-axis
-                break;
-            case 'L':
-                axis.set(0, 0, 1); // Left face rotates around the Z-axis
-                break;
-            case 'R':
-                axis.set(0, 0, -1); // Right face rotates around the Z-axis
-                break;
-            case 'F':
-                axis.set(1, 0, 0); // Front face rotates around the X-axis
-                break;
-            case 'B':
-                axis.set(-1, 0, 0); // Back face rotates around the X-axis
-                break;
-        }
+    setName(name) {
+        this.name = name;
+    }
 
-        const rotation = new THREE.Quaternion().setFromAxisAngle(axis, angle);
+    rotate(rotation) {
         this.mesh.quaternion.multiply(rotation);
     }
+    
+    toString() {
+        return `Cubie ${this.name}\nPosition: ${this.mesh.position.toArray().join(', ')}; Rotation: ${this.mesh.rotation.toArray().join(', ')}`;
+    }    
 }

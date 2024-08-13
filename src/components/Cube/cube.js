@@ -70,9 +70,12 @@ class Cube {
 
                     // Add cubie to the appropriate faces
                     for (const face in this.faces) {
+                        var tempName = '';
                         if (this.isCubieOnFace(cubie, face)) {
+                            tempName += face;
                             this.faces[face].addCubie(cubie);
                         }
+                        cubie.setName(tempName);
                     }
 
                     const mesh = cubie.getMesh();
@@ -82,25 +85,28 @@ class Cube {
         }
 
         this.scene.add(this.cubeGroup);
+
+        for (const face in this.faces) {
+            console.log(`Cubies on face ${face}: ${this.faces[face].cubies.length}`);
+        }
     }
 
     isCubieOnFace(cubie, face) {
-        const epsilon = 0.01;
-        const position = cubie.getMesh().position;
-
+        const epsilon = 0.2;
+        const position = cubie.position;
         switch (face) {
             case 'U':
-                return Math.abs(position.y - (this.cubeSize + this.spacing)) < epsilon;
+                return Math.abs(position.y - 1) < epsilon;
             case 'D':
-                return Math.abs(position.y + (this.cubeSize + this.spacing)) < epsilon;
-            case 'F':
-                return Math.abs(position.z - (this.cubeSize + this.spacing)) < epsilon;
-            case 'B':
-                return Math.abs(position.z + (this.cubeSize + this.spacing)) < epsilon;
+                return Math.abs(position.y + 1) < epsilon; 
             case 'L':
-                return Math.abs(position.x + (this.cubeSize + this.spacing)) < epsilon;
+                return Math.abs(position.x + 1) < epsilon; 
             case 'R':
-                return Math.abs(position.x - (this.cubeSize + this.spacing)) < epsilon;
+                return Math.abs(position.x - 1) < epsilon; 
+            case 'F':
+                return Math.abs(position.z - 1) < epsilon;
+            case 'B':
+                return Math.abs(position.z + 1) < epsilon;
             default:
                 return false;
         }
@@ -116,10 +122,14 @@ class Cube {
         this.renderer.render(this.scene, this.camera);
     }
 
-    rotateFace(faceName, direction) {
+    getFace(faceName) {
+        return this.faces[faceName];
+    }
+
+    rotateFace(faceName, clockwise) {
         const face = this.faces[faceName];
         if (face) {
-            face.rotateFace(direction);
+            face.rotateFace(clockwise);
         }
     }
 }

@@ -20,6 +20,36 @@ export function setupControls(cube) {
     });
 
     document.getElementById('scramble-btn').addEventListener('click', () => scrambleCube(cube));
+
+    document.getElementById('rotate-front-btn').addEventListener('click', () => {
+        console.log(cube.getFace('F').toString());
+        cube.rotateFace('F', true);
+    });
+
+    document.getElementById('rotate-right-btn').addEventListener('click', () => {
+        console.log(cube.getFace('R').toString());
+        cube.rotateFace('R', true);
+    });
+
+    document.getElementById('rotate-up-btn').addEventListener('click', () => {
+        console.log(cube.getFace('U').toString());
+        cube.rotateFace('U', true);
+    });
+
+    document.getElementById('rotate-back-btn').addEventListener('click', () => {
+        console.log(cube.getFace('B').toString());
+        cube.rotateFace('B', true);
+    });
+
+    document.getElementById('rotate-left-btn').addEventListener('click', () => {
+        console.log(cube.getFace('L').toString());
+        cube.rotateFace('L', true);
+    });
+    
+    document.getElementById('rotate-down-btn').addEventListener('click', () => {
+        console.log(cube.getFace('D').toString());
+        cube.rotateFace('D', true);
+    });
 }
 
 let isAnimating = false;
