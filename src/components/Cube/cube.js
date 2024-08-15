@@ -7,8 +7,8 @@ class Cube {
     constructor() {
         this.faces = {};
         this.cubies = [];
+        // this.globalOrientation = { x: 0, y: 0, z: 0 };
 
-        this.createFaces();
         this.init();
     }
 
@@ -20,6 +20,9 @@ class Cube {
     }
 
     init() {
+        this.faces = {};
+        this.cubies = [];
+
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(60, 400 / 400, 0.1, 1000);
         this.camera.position.set(3, 3, 3);
@@ -32,6 +35,7 @@ class Cube {
         this.cubeGroup = new THREE.Group();
         this.cubeGroup.rotation.order = 'YXZ';
 
+        this.createFaces();
         this.createRubiksCube();
         this.addAxesHelper();
         this.animate();
@@ -71,8 +75,8 @@ class Cube {
                     this.cubies.push(cubie);
 
                     // Add cubie to the appropriate faces
+                    var tempName = '';
                     for (const face in this.faces) {
-                        var tempName = '';
                         if (this.isCubieOnFace(cubie, face)) {
                             tempName += face;
                             this.faces[face].addCubie(cubie);
@@ -149,6 +153,20 @@ class Cube {
             });
         });
     }
+
+    resetCube() {
+        this.scene.remove(this.cubeGroup);
+        
+        this.cubies = [];
+        this.cubeGroup = new THREE.Group();
+        this.cubeGroup.rotation.order = 'YXZ';
+    
+        this.createFaces();
+        this.createRubiksCube();
+    
+        this.scene.add(this.cubeGroup);
+    }
+    
 }
 
 export { Cube };

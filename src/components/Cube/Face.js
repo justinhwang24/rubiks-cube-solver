@@ -14,11 +14,10 @@ class Face {
         }
     }
 
-    rotateFace(clockwise) {
-        console.log(`Rotating ${this.name} face, clockwise ${clockwise}`);
+    rotateFace(clockwise, duration = 0.5) {
+        console.log(`Rotating ${this.name} ${clockwise ? '' : 'counter'}clockwise`);
         const targetAngle = clockwise ? Math.PI / 2 : -Math.PI / 2;
         const axis = this.getRotationAxis();
-        const duration = 0.5; // Animation duration in seconds
     
         const initialPositions = [];
         const initialRotations = [];
