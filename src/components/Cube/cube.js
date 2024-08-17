@@ -7,7 +7,6 @@ class Cube {
     constructor() {
         this.faces = {};
         this.cubies = [];
-        // this.globalOrientation = { x: 0, y: 0, z: 0 };
 
         this.init();
     }
@@ -22,6 +21,7 @@ class Cube {
     init() {
         this.faces = {};
         this.cubies = [];
+        this.orientationMatrix = new THREE.Matrix4();
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(60, 400 / 400, 0.1, 1000);
@@ -34,6 +34,42 @@ class Cube {
 
         this.cubeGroup = new THREE.Group();
         this.cubeGroup.rotation.order = 'YXZ';
+
+        this.faceMapping = {
+            U: 'U',
+            D: 'D',
+            L: 'L',
+            R: 'R',
+            F: 'F',
+            B: 'B'
+        };
+        
+        this.rotationMappings = {
+            left: {
+                U: 'U',
+                D: 'D',
+                L: 'F',
+                R: 'B',
+                F: 'R',
+                B: 'L'
+            },
+            right: {
+                U: 'U',
+                D: 'D',
+                L: 'B',
+                R: 'F',
+                F: 'L',
+                B: 'R'
+            },
+            down: {
+                U: 'D',
+                D: 'U',
+                L: 'R',
+                R: 'L',
+                F: 'F',
+                B: 'B'
+            }
+        };
 
         this.createFaces();
         this.createRubiksCube();
@@ -91,16 +127,14 @@ class Cube {
         }
 
         this.scene.add(this.cubeGroup);
-
-        for (const face in this.faces) {
-            console.log(`Cubies on face ${face}: ${this.faces[face].cubies.length}`);
-        }
     }
 
     isCubieOnFace(cubie, face) {
         const epsilon = 0.2;
         const position = cubie.position;
-        switch (face) {
+        const mappedFace = this.faceMapping[face];
+
+        switch (mappedFace) {
             case 'U':
                 return Math.abs(position.y - 1) < epsilon;
             case 'D':
@@ -128,30 +162,39 @@ class Cube {
         this.renderer.render(this.scene, this.camera);
     }
 
-    getFace(faceName) {
-        return this.faces[faceName];
+    // getFace(faceName) {
+    //     return this.faces[faceName];
+    // }
+
+    getMappedFace(faceName) {
+        return this.faces[this.faceMapping[faceName]];
     }
 
-    rotateFace(faceName, clockwise) {
-        const face = this.faces[faceName];
-        if (face) {
-            face.rotateFace(clockwise);
-        }
+    updateFaceMapping(direction) {
+        const newMapping = {};
+        Object.keys(this.faceMapping).forEach(face => {
+            newMapping[face] = this.faceMapping[this.rotationMappings[direction][face]];
+        });
+        this.faceMapping = newMapping;
     }
 
     updateFaceAssignments() {
         Object.keys(this.faces).forEach(faceName => {
-            this.getFace(faceName).cubies = [];
+            this.getMappedFace(faceName).cubies = [];
         });
 
         // Reassign cubies to the correct faces
         this.cubies.forEach(cubie => {
             Object.keys(this.faces).forEach(faceName => {
                 if (this.isCubieOnFace(cubie, faceName)) {
-                    this.getFace(faceName).addCubie(cubie);
+                    this.getMappedFace(faceName).addCubie(cubie);
                 }
             });
         });
+
+        for (const face in this.faces) {
+            console.log(`Cubies on face ${this.faceMapping[face]}: ${this.getMappedFace(face).cubies.length}`);
+        }
     }
 
     resetCube() {
@@ -163,6 +206,15 @@ class Cube {
     
         this.createFaces();
         this.createRubiksCube();
+
+        this.faceMapping = {
+            U: 'U',
+            D: 'D',
+            L: 'L',
+            R: 'R',
+            F: 'F',
+            B: 'B'
+        };
     
         this.scene.add(this.cubeGroup);
     }

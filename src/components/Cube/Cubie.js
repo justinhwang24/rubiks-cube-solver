@@ -32,6 +32,23 @@ export default class Cubie {
         this.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
     }
 
+    // updatePositionAfterRotation(cubeGroupQuaternion) {
+    //     if (!this.mesh || !this.mesh.position) {
+    //         console.error('Mesh or mesh position is undefined for this cubie.');
+    //         return;
+    //     }
+
+    //     const newPosition = new THREE.Vector3().copy(this.mesh.position);
+    //     newPosition.applyQuaternion(cubeGroupQuaternion);
+    
+    //     // Round the position to avoid precision errors
+    //     newPosition.x = Math.round(newPosition.x);
+    //     newPosition.y = Math.round(newPosition.y);
+    //     newPosition.z = Math.round(newPosition.z);
+    
+    //     this.position.set(newPosition.x, newPosition.y, newPosition.z);
+    // }
+
     getName() {
         return this.name;
     }

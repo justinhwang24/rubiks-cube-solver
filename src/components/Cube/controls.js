@@ -2,21 +2,21 @@ import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/thr
 
 export function setupControls(cube) {
     document.getElementById('left-btn').addEventListener('click', async function () {
-        await logCubiePositionsAndFaces(cube, 'Before');
+        // await logCubiePositionsAndFaces(cube, 'Before');
         await rotateCube(cube, 'left');
-        await logCubiePositionsAndFaces(cube, 'After');
+        // await logCubiePositionsAndFaces(cube, 'After');
     });
 
     document.getElementById('down-btn').addEventListener('click', async function () {
-        await logCubiePositionsAndFaces(cube, 'Before');
+        // await logCubiePositionsAndFaces(cube, 'Before');
         await rotateCube(cube, 'down');
-        await logCubiePositionsAndFaces(cube, 'Before');
+        // await logCubiePositionsAndFaces(cube, 'After');
     });
 
     document.getElementById('right-btn').addEventListener('click', async function () {
         await logCubiePositionsAndFaces(cube, 'Before');
         await rotateCube(cube, 'right');
-        await logCubiePositionsAndFaces(cube, 'Before');
+        // await logCubiePositionsAndFaces(cube, 'After');
     });
 
     document.getElementById('scramble-btn').addEventListener('click', () => scrambleCube(cube));
@@ -106,11 +106,20 @@ async function rotateCube(cube, direction) {
         if (direction === 'left') {
             cube.cubeGroup.rotation.y -= Math.PI / 2;
         } else if (direction === 'down') {
-            cube.cubeGroup.rotation.x += Math.PI;
+            // console.log("MODULO Y: ", cube.cubeGroup.rotation.y / (Math.PI / 2) % 2);
+            // console.log("MODULO X: ", cube.cubeGroup.rotation.x / (Math.PI) % 2);
+            // console.log("MODULO Z: ", cube.cubeGroup.rotation.z / (Math.PI) % 2);
+            if (cube.cubeGroup.rotation.y / (Math.PI / 2) % 2 == 0) {
+                cube.cubeGroup.rotation.z += Math.PI;
+            }
+            else {
+                cube.cubeGroup.rotation.x += Math.PI;
+            }
         } else if (direction === 'right') {
             cube.cubeGroup.rotation.y += Math.PI / 2;
         }
 
+        const quaternion = new THREE.Quaternion().setFromEuler(cube.cubeGroup.rotation);
         const targetRotation = new THREE.Euler(cube.cubeGroup.rotation.x, cube.cubeGroup.rotation.y, cube.cubeGroup.rotation.z);
 
         function animateRotation(time) {
@@ -128,8 +137,22 @@ async function rotateCube(cube, direction) {
             } else {
                 isAnimating = false;
                 toggleButtons();
-                cube.cubies.forEach(cubie => cubie.updatePosition());
+                cube.cubies.forEach(cubie => {
+                    // cubie.updatePositionAfterRotation(quaternion);
+                    cubie.updatePosition();
+                });
                 cube.updateFaceAssignments();
+                cube.updateFaceMapping(direction);
+
+                cube.cubeGroup.rotation.x += 2 * Math.PI;
+                cube.cubeGroup.rotation.y += 2 * Math.PI;
+                cube.cubeGroup.rotation.z += 2 * Math.PI;
+                cube.cubeGroup.rotation.x = cube.cubeGroup.rotation.x % (2 * Math.PI);
+                cube.cubeGroup.rotation.y = cube.cubeGroup.rotation.y % (2 * Math.PI);
+                cube.cubeGroup.rotation.z = cube.cubeGroup.rotation.z % (2 * Math.PI);
+                console.log("X: ", cube.cubeGroup.rotation.x);
+                console.log("Y: ", cube.cubeGroup.rotation.y);
+                console.log("Z: ", cube.cubeGroup.rotation.z);
                 resolve();
             }
         }
@@ -146,10 +169,18 @@ async function scrambleCube(cube) {
     const directions = ['', '2', '\'']; // No direction, 90° clockwise, 180°, 90° counter-clockwise
 
     let scramble = [];
+    let previousMove = null;
+
     for (let i = 0; i < 20; i++) { // Number of scramble moves
-        const move = moves[Math.floor(Math.random() * moves.length)];
-        const direction = directions[Math.floor(Math.random() * directions.length)];
+        let move, direction;
+
+        do {
+            move = moves[Math.floor(Math.random() * moves.length)];
+        } while (move === previousMove); // Avoid repeating the same move
+
+        direction = directions[Math.floor(Math.random() * directions.length)];
         scramble.push(move + direction);
+        previousMove = move;
     }
 
     console.log('Scramble Sequence:', scramble.join(' '));
@@ -167,7 +198,7 @@ async function rotateFace(cube, faceName, clockwise, duration = 0.5) {
     
         toggleButtons();
     
-        const face = cube.getFace(faceName);
+        const face = cube.getMappedFace(faceName);
         if (face) {
             face.rotateFace(clockwise, duration);
     
