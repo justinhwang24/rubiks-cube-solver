@@ -5,23 +5,12 @@ import Face from './Face.js';
 
 class Cube {
     constructor() {
-        this.faces = {};
-        this.cubies = [];
-
         this.init();
-    }
-
-    createFaces() {
-        const faceNames = ['U', 'D', 'L', 'R', 'F', 'B'];
-        faceNames.forEach(name => {
-            this.faces[name] = new Face(name, this);
-        });
     }
 
     init() {
         this.faces = {};
         this.cubies = [];
-        this.orientationMatrix = new THREE.Matrix4();
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(60, 400 / 400, 0.1, 1000);
@@ -30,6 +19,7 @@ class Cube {
 
         this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         this.renderer.setSize(400, 400);
+        document.getElementById('cube-container').replaceChildren();
         document.getElementById('cube-container').appendChild(this.renderer.domElement);
 
         this.cubeGroup = new THREE.Group();
@@ -73,9 +63,15 @@ class Cube {
 
         this.createFaces();
         this.createRubiksCube();
-        this.addAxesHelper();
         this.animate();
         setupColorPicker(this);
+    }
+
+    createFaces() {
+        const faceNames = ['U', 'D', 'L', 'R', 'F', 'B'];
+        faceNames.forEach(name => {
+            this.faces[name] = new Face(name, this);
+        });
     }
 
     createRubiksCube() {
@@ -94,7 +90,6 @@ class Cube {
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
                 for (let z = -1; z <= 1; z++) {
-                    const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
                     const materials = [
                         new THREE.MeshBasicMaterial({ color: (x === 1 ? colors['R'] : 0x000000) }), 
                         new THREE.MeshBasicMaterial({ color: (x === -1 ? colors['L'] : 0x000000) }), 
@@ -111,13 +106,10 @@ class Cube {
                     this.cubies.push(cubie);
 
                     // Add cubie to the appropriate faces
-                    var tempName = '';
                     for (const face in this.faces) {
                         if (this.isCubieOnFace(cubie, face)) {
-                            tempName += face;
                             this.faces[face].addCubie(cubie);
                         }
-                        cubie.setName(tempName);
                     }
 
                     const mesh = cubie.getMesh();
@@ -152,19 +144,14 @@ class Cube {
         }
     }
 
-    addAxesHelper() {
-        const axesHelper = new THREE.AxesHelper(2);
-        this.scene.add(axesHelper);
-    }
-
     animate() {
         requestAnimationFrame(() => this.animate());
         this.renderer.render(this.scene, this.camera);
     }
 
-    // getFace(faceName) {
-    //     return this.faces[faceName];
-    // }
+    getFace(faceName) {
+        return this.faces[faceName];
+    }
 
     getMappedFace(faceName) {
         return this.faces[this.faceMapping[faceName]];
@@ -191,34 +178,33 @@ class Cube {
                 }
             });
         });
-
-        for (const face in this.faces) {
-            console.log(`Cubies on face ${this.faceMapping[face]}: ${this.getMappedFace(face).cubies.length}`);
-        }
     }
 
     resetCube() {
-        this.scene.remove(this.cubeGroup);
+        this.init()
         
-        this.cubies = [];
-        this.cubeGroup = new THREE.Group();
-        this.cubeGroup.rotation.order = 'YXZ';
-    
-        this.createFaces();
-        this.createRubiksCube();
-
-        this.faceMapping = {
-            U: 'U',
-            D: 'D',
-            L: 'L',
-            R: 'R',
-            F: 'F',
-            B: 'B'
-        };
-    
-        this.scene.add(this.cubeGroup);
+        const arr = ['U', 'R', 'F', 'D', 'L', 'B'];
+        arr.forEach((faceName) => {
+            this.getFace(faceName).colors = new Array(9).fill(faceName);
+        });
     }
-    
+
+    toString() {
+        const arr = ['U', 'R', 'F', 'D', 'L', 'B'];
+        let string = '';
+        let i = 0;
+        arr.forEach((faceName) => {
+            string += 'FACE ' + faceName + '\n';
+            this.getFace(faceName).colors.forEach((c) => {
+                string += c;
+                if (i % 3 == 2) string += '\n';
+                i++;
+            });
+            string += '------\n';
+            // this.getFace(faceName).colors.forEach((c) => string += c);
+        });
+        return string;
+    }
 }
 
 export { Cube };

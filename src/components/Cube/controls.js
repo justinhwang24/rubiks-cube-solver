@@ -21,6 +21,9 @@ export function setupControls(cube) {
 
     document.getElementById('scramble-btn').addEventListener('click', () => scrambleCube(cube));
     document.getElementById('reset-btn').addEventListener('click', () => cube.resetCube());
+    document.getElementById('solve-btn').addEventListener('click', () => {
+        console.log("CUBE STRING: ", cube.toString());
+    });
 
     document.getElementById('rotate-front-btn').addEventListener('click', () => {
         rotateFace(cube, 'F', true);
@@ -106,9 +109,6 @@ async function rotateCube(cube, direction) {
         if (direction === 'left') {
             cube.cubeGroup.rotation.y -= Math.PI / 2;
         } else if (direction === 'down') {
-            // console.log("MODULO Y: ", cube.cubeGroup.rotation.y / (Math.PI / 2) % 2);
-            // console.log("MODULO X: ", cube.cubeGroup.rotation.x / (Math.PI) % 2);
-            // console.log("MODULO Z: ", cube.cubeGroup.rotation.z / (Math.PI) % 2);
             if (cube.cubeGroup.rotation.y / (Math.PI / 2) % 2 == 0) {
                 cube.cubeGroup.rotation.z += Math.PI;
             }
@@ -119,7 +119,6 @@ async function rotateCube(cube, direction) {
             cube.cubeGroup.rotation.y += Math.PI / 2;
         }
 
-        const quaternion = new THREE.Quaternion().setFromEuler(cube.cubeGroup.rotation);
         const targetRotation = new THREE.Euler(cube.cubeGroup.rotation.x, cube.cubeGroup.rotation.y, cube.cubeGroup.rotation.z);
 
         function animateRotation(time) {
@@ -138,7 +137,6 @@ async function rotateCube(cube, direction) {
                 isAnimating = false;
                 toggleButtons();
                 cube.cubies.forEach(cubie => {
-                    // cubie.updatePositionAfterRotation(quaternion);
                     cubie.updatePosition();
                 });
                 cube.updateFaceAssignments();
