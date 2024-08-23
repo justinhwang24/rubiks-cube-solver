@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+// import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 import Cubie from './Cubie.js';
 
 class Face {
@@ -17,6 +17,7 @@ class Face {
 
     rotateFace(clockwise, duration = 0.5) {
         console.log(`Rotating ${this.name} ${clockwise ? '' : 'counter'}clockwise`);
+
         const targetAngle = clockwise ? Math.PI / 2 : -Math.PI / 2;
         const axis = this.getRotationAxis();
     
@@ -58,7 +59,7 @@ class Face {
             else {
                 this.cubies.forEach(cubie => cubie.updatePosition());
                 this.cube.updateFaceAssignments();
-                this.rotateColors(clockwise)
+                this.rotateColors(clockwise);
             }
         };
     
@@ -75,8 +76,14 @@ class Face {
             6: 8, 7: 5, 8: 2
         };
 
+        const counterclockwiseMap = {
+            0: 2, 1: 5, 2: 8,
+            3: 1, 4: 4, 5: 7,
+            6: 0, 7: 3, 8: 6
+        };
+        
         for (let i = 0; i < 9; i++) {
-            newColors[i] = clockwise ? this.colors[clockwiseMap[i]] : 8 - this.colors[clockwiseMap[i]];
+            newColors[i] = clockwise ? this.colors[clockwiseMap[i]] : this.colors[counterclockwiseMap[i]];
         }
 
         this.colors = newColors;
@@ -85,7 +92,7 @@ class Face {
         this.setSurroundingStickers(clockwise);
     }
 
-    getSurroundingStickers() {
+    getSurroundingStickers(clockwise) {
         const surroundingStickers = [];
         const faceNames = [];
         const indices = {};
@@ -122,9 +129,11 @@ class Face {
                 indices['D'] = [0, 3, 6]; // Reverse
                 indices['B'] = [2, 5, 8]; // Reverse
     
-                surroundingStickers.push(...this.cube.getFace('U').colors.filter((_, index) => index % 3 === 0)); // Left column of U face
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('U').colors.filter((_, index) => index % 3 === 0)); // Left column of U face
+                else surroundingStickers.push(...this.cube.getFace('U').colors.filter((_, index) => index % 3 === 0).reverse());
                 surroundingStickers.push(...this.cube.getFace('F').colors.filter((_, index) => index % 3 === 0)); // Left column of F face
-                surroundingStickers.push(...this.cube.getFace('D').colors.filter((_, index) => index % 3 === 0).reverse()); // Left column of D face
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('D').colors.filter((_, index) => index % 3 === 0).reverse()); // Left column of D face
+                else surroundingStickers.push(...this.cube.getFace('D').colors.filter((_, index) => index % 3 === 0));
                 surroundingStickers.push(...this.cube.getFace('B').colors.filter((_, index) => index % 3 === 2).reverse()); // Right column of B face (reverse)
                 break;
             case 'R':
@@ -134,10 +143,12 @@ class Face {
                 indices['D'] = [2, 5, 8];
                 indices['F'] = [2, 5, 8];
     
-                surroundingStickers.push(...this.cube.getFace('U').colors.filter((_, index) => index % 3 === 2).reverse()); // Right column of U face
-                surroundingStickers.push(...this.cube.getFace('B').colors.filter((_, index) => index % 3 === 0).reverse()); // Left column of B face (reverse)
-                surroundingStickers.push(...this.cube.getFace('D').colors.filter((_, index) => index % 3 === 2)); // Right column of D face
-                surroundingStickers.push(...this.cube.getFace('F').colors.filter((_, index) => index % 3 === 2)); // Right column of F face
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('U').colors.filter((_, index) => index % 3 === 2).reverse()); // Right column of U face
+                else surroundingStickers.push(...this.cube.getFace('U').colors.filter((_, index) => index % 3 === 2));
+                surroundingStickers.push(...this.cube.getFace('B').colors.filter((_, index) => index % 3 === 0).reverse()); // Left column of B face (reverse) 
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('D').colors.filter((_, index) => index % 3 === 2)); // Right column of D face
+                else surroundingStickers.push(...this.cube.getFace('D').colors.filter((_, index) => index % 3 === 2).reverse());
+                surroundingStickers.push(...this.cube.getFace('F').colors.filter((_, index) => index % 3 === 2)); // Right column of F face 
                 break;
             case 'F':
                 faceNames.push('U', 'R', 'D', 'L');
@@ -146,22 +157,30 @@ class Face {
                 indices['D'] = [0, 1, 2];
                 indices['L'] = [2, 5, 8]; // Reverse
     
-                surroundingStickers.push(...this.cube.getFace('U').colors.slice(6, 9)); // Bottom row of U face
-                surroundingStickers.push(...this.cube.getFace('R').colors.filter((_, index) => index % 3 === 0).reverse()); // Left column of R face
-                surroundingStickers.push(...this.cube.getFace('D').colors.slice(0, 3)); // Top row of D face
-                surroundingStickers.push(...this.cube.getFace('L').colors.filter((_, index) => index % 3 === 2).reverse()); // Right column of L face (reverse)
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('U').colors.slice(6, 9)); // Bottom row of U face
+                else surroundingStickers.push(...this.cube.getFace('U').colors.slice(6, 9).reverse());
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('R').colors.filter((_, index) => index % 3 === 0).reverse()); // Left column of R face
+                else surroundingStickers.push(...this.cube.getFace('R').colors.filter((_, index) => index % 3 === 0));
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('D').colors.slice(0, 3)); // Top row of D face
+                else surroundingStickers.push(...this.cube.getFace('D').colors.slice(0, 3).reverse());
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('L').colors.filter((_, index) => index % 3 === 2).reverse()); // Right column of L face (reverse)
+                else surroundingStickers.push(...this.cube.getFace('L').colors.filter((_, index) => index % 3 === 2));
                 break;
             case 'B':
                 faceNames.push('U', 'L', 'D', 'R');
-                indices['U'] = [0, 1, 2]; // Reverse
+                indices['U'] = [0, 1, 2];
                 indices['L'] = [0, 3, 6];
                 indices['D'] = [6, 7, 8]; // Reverse
                 indices['R'] = [2, 5, 8];
     
-                surroundingStickers.push(...this.cube.getFace('U').colors.slice(0, 3).reverse()); // Top row of U face
-                surroundingStickers.push(...this.cube.getFace('L').colors.filter((_, index) => index % 3 === 0)); // Left column of L face
-                surroundingStickers.push(...this.cube.getFace('D').colors.slice(6, 9).reverse()); // Bottom row of D face
-                surroundingStickers.push(...this.cube.getFace('R').colors.filter((_, index) => index % 3 === 2)); // Right column of R face (reverse)
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('U').colors.slice(0, 3).reverse()); // Top row of U face
+                else surroundingStickers.push(...this.cube.getFace('U').colors.slice(0, 3));
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('L').colors.filter((_, index) => index % 3 === 0)); // Left column of L face
+                else surroundingStickers.push(...this.cube.getFace('L').colors.filter((_, index) => index % 3 === 0).reverse());
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('D').colors.slice(6, 9).reverse()); // Bottom row of D face
+                else surroundingStickers.push(...this.cube.getFace('D').colors.slice(6, 9));
+                if (clockwise) surroundingStickers.push(...this.cube.getFace('R').colors.filter((_, index) => index % 3 === 2)); // Right column of R face (reverse)
+                else surroundingStickers.push(...this.cube.getFace('R').colors.filter((_, index) => index % 3 === 2).reverse());
                 break;
         }
     
@@ -169,7 +188,7 @@ class Face {
     }    
 
     setSurroundingStickers(clockwise) {
-        const { stickers, faceNames, indices } = this.getSurroundingStickers();
+        const { stickers, faceNames, indices } = this.getSurroundingStickers(clockwise);
     
         // Shift the stickers based on the rotation direction
         const shiftBy = clockwise ? 3 : -3;
@@ -185,6 +204,7 @@ class Face {
             this.cube.getFace(faceName).colors[faceIndices[1]] = rotatedStickers[i * 3 + 1];
             this.cube.getFace(faceName).colors[faceIndices[2]] = rotatedStickers[i * 3 + 2];
         }
+        console.log(this.cube.toString());
     }
 
     getRotationAxis() {

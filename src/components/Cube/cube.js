@@ -1,7 +1,8 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+// import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 import { setupColorPicker } from './color-picker.js';
 import Cubie from './Cubie.js';
 import Face from './Face.js';
+
 
 class Cube {
     constructor() {
@@ -9,6 +10,7 @@ class Cube {
     }
 
     init() {
+        cubeSolver.initialize('kociemba');
         this.faces = {};
         this.cubies = [];
 
@@ -180,6 +182,17 @@ class Cube {
         });
     }
 
+    generateScramble() {
+        return cubeSolver.scramble();
+    }
+
+    generateSolution() {
+        const cubeString = this.toString();
+        const sol = cubeSolver.solve(cubeString);
+        
+        return sol;
+    }
+
     resetCube() {
         this.init()
         
@@ -194,14 +207,14 @@ class Cube {
         let string = '';
         let i = 0;
         arr.forEach((faceName) => {
-            string += 'FACE ' + faceName + '\n';
-            this.getFace(faceName).colors.forEach((c) => {
-                string += c;
-                if (i % 3 == 2) string += '\n';
-                i++;
-            });
-            string += '------\n';
-            // this.getFace(faceName).colors.forEach((c) => string += c);
+            // string += 'FACE ' + faceName + '\n';
+            // this.getFace(faceName).colors.forEach((c) => {
+            //     string += c;
+            //     if (i % 3 == 2) string += '\n';
+            //     i++;
+            // });
+            // string += '------\n';
+            this.getFace(faceName).colors.forEach((c) => string += c);
         });
         return string;
     }

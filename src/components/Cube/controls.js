@@ -1,28 +1,27 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+// import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 
 export function setupControls(cube) {
     document.getElementById('left-btn').addEventListener('click', async function () {
-        // await logCubiePositionsAndFaces(cube, 'Before');
         await rotateCube(cube, 'left');
-        // await logCubiePositionsAndFaces(cube, 'After');
     });
 
     document.getElementById('down-btn').addEventListener('click', async function () {
-        // await logCubiePositionsAndFaces(cube, 'Before');
         await rotateCube(cube, 'down');
-        // await logCubiePositionsAndFaces(cube, 'After');
     });
 
     document.getElementById('right-btn').addEventListener('click', async function () {
-        await logCubiePositionsAndFaces(cube, 'Before');
         await rotateCube(cube, 'right');
-        // await logCubiePositionsAndFaces(cube, 'After');
     });
 
-    document.getElementById('scramble-btn').addEventListener('click', () => scrambleCube(cube));
+    document.getElementById('scramble-btn').addEventListener('click', () => {
+        cube.resetCube();
+        scrambleCube(cube, cube.generateScramble());
+    });
     document.getElementById('reset-btn').addEventListener('click', () => cube.resetCube());
     document.getElementById('solve-btn').addEventListener('click', () => {
         console.log("CUBE STRING: ", cube.toString());
+        console.log("SOL: ", cube.generateSolution());
+        scrambleCube(cube, cube.generateSolution());
     });
 
     document.getElementById('rotate-front-btn').addEventListener('click', () => {
@@ -46,7 +45,7 @@ export function setupControls(cube) {
     });
     
     document.getElementById('rotate-down-btn').addEventListener('click', () => {
-        rotateFace(cube, 'D', true);
+        rotateFace(cube, 'D', false);
     });
 }
 
@@ -72,24 +71,6 @@ function toggleButtons() {
         document.getElementById(id).disabled = !disable;
     });
     disable = !disable;
-}
-
-async function logCubiePositionsAndFaces(cube, when) {
-    console.log(`\n=== ${when} Rotation ===`);
-    cube.cubies.forEach(cubie => {
-        const position = new THREE.Vector3();
-        cubie.mesh.getWorldPosition(position);
-        console.log(`Cubie Position: x=${position.x.toFixed(2)}, y=${position.y.toFixed(2)}, z=${position.z.toFixed(2)}`);
-    });
-
-    console.log("Face Assignments:");
-    for (const faceName in cube.faces) {
-        if (cube.faces.hasOwnProperty(faceName)) {
-            const face = cube.faces[faceName];
-            const cubieIds = face.cubies.map(cubie => cubie.getName());
-            console.log(`Face ${faceName}: Cubies [${cubieIds.join(', ')}]`);
-        }
-    }
 }
 
 let isAnimating = false;
@@ -148,9 +129,6 @@ async function rotateCube(cube, direction) {
                 cube.cubeGroup.rotation.x = cube.cubeGroup.rotation.x % (2 * Math.PI);
                 cube.cubeGroup.rotation.y = cube.cubeGroup.rotation.y % (2 * Math.PI);
                 cube.cubeGroup.rotation.z = cube.cubeGroup.rotation.z % (2 * Math.PI);
-                console.log("X: ", cube.cubeGroup.rotation.x);
-                console.log("Y: ", cube.cubeGroup.rotation.y);
-                console.log("Z: ", cube.cubeGroup.rotation.z);
                 resolve();
             }
         }
@@ -159,31 +137,13 @@ async function rotateCube(cube, direction) {
     });
 }
 
-async function scrambleCube(cube) {
-    cube.resetCube();
+async function scrambleCube(cube, scramble) {
     lockButtons();
 
-    const moves = ['U', 'D', 'L', 'R', 'F', 'B'];
-    const directions = ['', '2', '\'']; // No direction, 90° clockwise, 180°, 90° counter-clockwise
+    let arr = scramble.split(' ');
+    console.log(arr);
 
-    let scramble = [];
-    let previousMove = null;
-
-    for (let i = 0; i < 20; i++) { // Number of scramble moves
-        let move, direction;
-
-        do {
-            move = moves[Math.floor(Math.random() * moves.length)];
-        } while (move === previousMove); // Avoid repeating the same move
-
-        direction = directions[Math.floor(Math.random() * directions.length)];
-        scramble.push(move + direction);
-        previousMove = move;
-    }
-
-    console.log('Scramble Sequence:', scramble.join(' '));
-
-    for (let move of scramble) {
+    for (let move of arr) {
         await performMove(cube, move, 0.2);
     }
     lockButtons();
