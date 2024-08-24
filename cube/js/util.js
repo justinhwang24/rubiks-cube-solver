@@ -11,18 +11,18 @@ function typeInfo(sentence, if_del) {
     else typewriter.typeString(sentence).start();
 }
 
-function cubeShuffle() {
-    let shuffle = Cube.scramble();
-    typeInfo("Shuffle: " + shuffle, true);
-    let shuffle_step = convertAlg(shuffle);
+function cubeScramble() {
+    let scramble = Cube.scramble();
+    typeInfo("Scramble: " + scramble, true);
+    let scramble_step = convertAlg(scramble);
     
-    console.log(shuffle_step);
-    cubeGL.shuffle(shuffle_step.length, shuffle_step);
+    console.log(scramble_step);
+    cubeGL.shuffle(scramble_step.length, scramble_step);
 }
 
 function cubeReset() {
-    updateCubeTwoPhase();
-    const solveString = cubeTwoPhase.solve();
+    updateCube();
+    const solveString = cube.solve();
     let solve_step = convertAlg(solveString);
     
     cubeGL.twistDuration = 0;

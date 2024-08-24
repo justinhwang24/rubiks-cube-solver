@@ -68,9 +68,10 @@
 		<!-- Typewriting Plugin -->
 		<script type="text/javascript" src="lib/typewriting/typewriting.js"></script>
 
-		<script type="text/javascript" src="cube/js/initial.js"></script>
+		<script type="text/javascript" src="cube/js/info.js"></script>
+		<script type="text/javascript" src="cube/js/init.js"></script>
+		<script type="text/javascript" src="cube/js/solve.js"></script>
 		<script type="text/javascript" src="cube/js/util.js"></script>
-		<script type="text/javascript" src="cube/js/two-phase.js"></script>
 	</head>
 
 	<body>
@@ -80,9 +81,9 @@
 		</div>
 		<div class="solve">
 			<button onclick="solve()">Solve</button>
-			<button onclick="cubeShuffle()">Shuffle</button>
+			<button onclick="cubeScramble()">Scramble</button>
 			<button onclick="cubeReset()">Reset</button>
-			<button onclick="">Info</button>
+			<button id="infoButton" class="info-button">Info</button>
 		</div>
 		<div class="twist">
 			<h1>Rotate</h1>
@@ -99,8 +100,33 @@
 			<button onclick="cubeGL.twist('L')">L</button>
 			<button onclick="cubeGL.twist('l')">L'</button><br>
 		</div>
-		<!-- <footer>
-			<button href="https://github.com/yourusername" target="_blank" class="github-button">GitHub</button>
-		</footer> -->
+
+		<!-- Modal for instructions -->
+		<div id="infoModal" class="modal">
+			<span class="close">&times;</span>
+			<div class="modal-content">
+				<h2>Instructions</h2>
+				<p>Here's how to use the Rubik's Cube:</p>
+				<ul class="instructions-list">
+					<li><strong>Solve:</strong> Solves the cube.</li>
+					<li><strong>Scramble:</strong> Scrambles the cube to a random state.</li>
+					<li><strong>Reset:</strong> Resets the cube to its solved state.</li>
+					<li><strong>Rotate:</strong> Use the buttons to rotate different faces of the cube.</li>
+				</ul>
+				<h2>Notation</h2>
+				<p>The following represent clockwise directions:</p>
+				<ul class="instructions-list">
+					<li><strong>U:</strong> Up</li>
+					<li><strong>F:</strong> Front</li>
+					<li><strong>R:</strong> Right</li>
+					<li><strong>D:</strong> Down</li>
+					<li><strong>B:</strong> Back</li>
+					<li><strong>L:</strong> Left</li>
+				</ul>
+				<p>Note that the prime symbol (') represents a counterclockwise direction.</p>
+				<h2><a href="https://github.com/justinhwang24/rubiks-cube-solver" target="_blank">GitHub</a></h2>
+				<p>Created by Justin Hwang</p>
+			</div>
+		</div>
 	</body>
 </html>
