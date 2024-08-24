@@ -2,7 +2,7 @@
 
 Looking to solve a Rubik's Cube? This web app simulates a working Rubik's Cube. After scrambling the cube, you can generate a mathematically optimal solution to solve the cube within 20 moves.
 
-**Link to project:** Coming soon
+**Link to project:** https://justinhwang24.github.io/rubiks-cube-solver/
 
 ## How It Works
 
