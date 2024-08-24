@@ -1,46 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rubik's Cube Solver</title>
-    <link rel="stylesheet" href="src/styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://unpkg.com/cube-solver@2.4.1/dist/bundle.js"></script>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Rubik's Cube Solver</title>
+		<meta name="description" content="A Rubik's Cube Solver.">
+		<link rel="icon" type="image/png" href="assets/favicon.ico">
 
-    <div id="cube-container"></div>
-    
-    <div id="color-picker">
-        <button class="color-btn" style="background-color: #ffffff;" data-color="#ffffff"></button>
-        <button class="color-btn" style="background-color: #ffff00;" data-color="#ffff00"></button>
-        <button class="color-btn" style="background-color: #00ff00;" data-color="#00ff00"></button>
-        <button class="color-btn" style="background-color: #0000ff;" data-color="#0000ff"></button>
-        <button class="color-btn" style="background-color: #ff8000;" data-color="#ff8000"></button>
-        <button class="color-btn" style="background-color: #ff0000;" data-color="#ff0000"></button>
-    </div>
-    
-    <div id="controls">
-        <button id="rotate-front-btn">F</button>
-        <button id="rotate-right-btn">R</button>
-        <button id="rotate-up-btn">U</button>
-        <button id="rotate-back-btn">B</button>
-        <button id="rotate-left-btn">L</button>
-        <button id="rotate-down-btn">D</button>
-        <br>
-        <button id="left-btn"><i class="fa-solid fa-caret-left"></i></button>
-        <button id="down-btn"><i class="fa-solid fa-caret-down"></i></button>
-        <button id="right-btn"><i class="fa-solid fa-caret-right"></i></button>
-        <br>
-        <button id="solve-btn">Solve</button>
-        <button id="scramble-btn">Scramble</button>
-        <button id="reset-btn">Reset</button>
-    </div>
-    
-    <script type="module" src="main.js"></script>
-    <script type="module" src="src/components/Cube/color-picker.js"></script>
-    
-</body>
+		<!-- Font -->
+		<link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+
+		<!------ CSS ------>
+		<link rel="stylesheet" type="text/css" href="lib/cuber/css/cube.css">
+		<link rel="stylesheet" type="text/css" href="cube/css/style.css">
+
+		<!-- Cube source code -->
+		<script type="text/javascript" src="lib/cuber/js/vendor/tween.min.js"></script>
+
+		<!--  Three.js  -->
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/Three.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/core/EventDispatcher.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Math.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Quaternion.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Vector2.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Vector3.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Box3.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Sphere.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Euler.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Matrix3.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Matrix4.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/core/Object3D.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/cameras/Camera.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/cameras/PerspectiveCamera.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Ray.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/threejs/src/math/Plane.js"></script>
+
+		<!--  Cube internals  -->
+		<script type="text/javascript" src="lib/cuber/js/ERNO.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/vendor/CSS3DRenderer.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/utils/utils.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/utils/Number.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/utils/String.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/utils/Array.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/colors.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/directions.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/queues.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/twists.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/cubelets.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/groups.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/slices.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/folds.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/projector.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/interaction.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/controls.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/cubes.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/solvers.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/renderer.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/jquery-3.4.0.min.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/extras/renderers/iecss3d.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/extras/renderers/ierenderer.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/extras/controls/locked.js"></script>
+		<script type="text/javascript" src="lib/cuber/js/extras/deviceMotion.js"></script>
+
+		<!-- Two-phase Algorithm  -->
+		<script type="text/javascript" src="lib/cubejs/cube.js"></script>
+		<script type="text/javascript" src="lib/cubejs/solve.js"></script>
+
+		<!-- Typewriting Plugin -->
+		<script type="text/javascript" src="lib/typewriting/typewriting.js"></script>
+
+		<script type="text/javascript" src="cube/js/initial.js"></script>
+		<script type="text/javascript" src="cube/js/util.js"></script>
+		<script type="text/javascript" src="cube/js/two-phase.js"></script>
+	</head>
+
+	<body>
+		<div id="container"></div>
+		<div class="type">
+			<div id="terminal"></div>
+		</div>
+		<div class="solve">
+			<button onclick="solve()">Solve</button>
+			<button onclick="cubeShuffle()">Shuffle</button>
+			<button onclick="cubeReset()">Reset</button>
+			<button onclick="">Info</button>
+		</div>
+		<div class="twist">
+			<h1>Rotate</h1>
+			<button onclick="cubeGL.twist('U')">U</button>
+			<button onclick="cubeGL.twist('u')">U'</button><br>
+			<button onclick="cubeGL.twist('F')">F</button>
+			<button onclick="cubeGL.twist('f')">F'</button><br>
+			<button onclick="cubeGL.twist('R')">R</button>
+			<button onclick="cubeGL.twist('r')">R'</button>
+			<button onclick="cubeGL.twist('D')">D</button>
+			<button onclick="cubeGL.twist('d')">D'</button><br>
+			<button onclick="cubeGL.twist('B')">B</button>
+			<button onclick="cubeGL.twist('b')">B'</button><br>
+			<button onclick="cubeGL.twist('L')">L</button>
+			<button onclick="cubeGL.twist('l')">L'</button><br>
+		</div>
+		<!-- <footer>
+			<button href="https://github.com/yourusername" target="_blank" class="github-button">GitHub</button>
+		</footer> -->
+	</body>
 </html>
